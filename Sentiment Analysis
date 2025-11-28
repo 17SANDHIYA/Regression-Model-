@@ -1,34 +1,66 @@
-from keras.models import Sequential
-from keras.layers import Embedding, SimpleRNN, Dense
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+# -----------------------------
+# 1. Import Required Libraries
+# -----------------------------
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, LSTM, Dense
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Sample sentences
-texts = ["I love this movie", "This film was terrible"]
+# -----------------------------
+# 2. Create a small dataset
+# -----------------------------
+texts = [
+    "I love this movie",
+    "This film is excellent",
+    "Amazing acting and story",
+    "I really enjoyed the movie",
+    "Worst movie ever",
+    "I hated this film",
+    "Very boring and bad",
+    "The acting was terrible"
+]
 
-# Labels: 1 = positive, 0 = negative
-labels = [1, 0]
+labels = [1, 1, 1, 1, 0, 0, 0, 0]
+labels = np.array(labels)   # IMPORTANT FIX
 
-# Convert words to numbers
+
+# -----------------------------
+# 3. Convert text to numeric sequences
+# -----------------------------
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(texts)
-X = tokenizer.texts_to_sequences(texts)
-X = pad_sequences(X, maxlen=5)
 
-# Build RNN model
+X = tokenizer.texts_to_sequences(texts)
+X = pad_sequences(X, maxlen=6)   # sentence length = 6
+
+
+# -----------------------------
+# 4. Build the RNN Model (LSTM)
+# -----------------------------
 model = Sequential()
-model.add(Embedding(input_dim=50, output_dim=8, input_length=5))
-model.add(SimpleRNN(10))
+model.add(Embedding(input_dim=100, output_dim=16))
+model.add(LSTM(12))
 model.add(Dense(1, activation='sigmoid'))
 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+# -----------------------------
+# 5. Compile the model
+# -----------------------------
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
 
-# Train
-model.fit(X, labels, epochs=5)
+# -----------------------------
+# 6. Train the model
+# -----------------------------
+model.fit(X, labels, epochs=8)
 
-# Predict sentiment
-test = ["I hated the movie"]
-seq = tokenizer.texts_to_sequences(test)
-seq = pad_sequences(seq, maxlen=5)
 
-print("Sentiment:", model.predict(seq))
+# -----------------------------
+# 7. Test the model with new text
+# -----------------------------
+test_text = ["I really loved the movie"]
+test_seq = tokenizer.texts_to_sequences(test_text)
+test_seq = pad_sequences(test_seq, maxlen=6)
+
+print("\nSentiment Score:", model.predict(test_seq))
