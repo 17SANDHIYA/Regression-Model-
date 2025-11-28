@@ -1,0 +1,39 @@
+# 1. Import the required library
+from sklearn.linear_model import LinearRegression
+
+# 2. Training data: House details
+# Features: [Size in sq ft, Bedrooms, Age]
+X = [
+    [1000, 2, 5],
+    [1500, 3, 3],
+    [2000, 4, 1],
+    [1800, 3, 4],
+    [1200, 2, 6],
+    [2200, 4, 2],
+    [1600, 3, 3],
+    [1400, 2, 7],
+    [2500, 5, 2],
+    [1300, 2, 4]
+]
+
+# 3. Output (Price in lakhs)
+y = [50, 70, 90, 85, 55, 110, 75, 60, 130, 58]
+
+# 4. Create a Regression model object
+model = LinearRegression()
+
+# 5. Train (fit) the model using data
+model.fit(X, y)
+
+# 6. Print the coefficients learned
+print("Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
+
+# 7. Predict price for a new house
+new_house = [[1700, 3, 2]]   # Size=1700, Bedrooms=3, Age=2
+
+# 8. Get prediction
+predicted_price = model.predict(new_house)
+
+# 9. Print the result
+print("Predicted Price for new house:", predicted_price[0], "lakhs")
